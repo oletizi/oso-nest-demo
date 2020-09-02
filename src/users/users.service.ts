@@ -1,14 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-export class Actor {}
-
-export class Guest extends Actor {}
-
-export class User extends Actor {
-  constructor(public id: number, public username: String, public password: String){
-    super()
-  }
-}
+export type User = any;
 
 @Injectable()
 export class UsersService {
@@ -16,13 +8,25 @@ export class UsersService {
 
   constructor() {
     this.users = [
-      new User(1, 'john', 'changeme'),
-      new User(2, 'chris', 'secret'),
-      new User(3, 'maria', 'guess'),
+      {
+        userId: 1,
+        username: 'john',
+        password: 'changeme',
+      },
+      {
+        userId: 2,
+        username: 'chris',
+        password: 'secret',
+      },
+      {
+        userId: 3,
+        username: 'maria',
+        password: 'guess',
+      },
     ];
   }
 
-  findOne(username: string): User | undefined {
+  async findOne(username: string): Promise<User | undefined> {
     return this.users.find(user => user.username === username);
   }
 }

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
-import {UsersService} from "../users/users.service";
+import { UsersService } from "../users/users.service";
 
 describe('AuthService', () => {
   let service: AuthService;
@@ -16,4 +16,7 @@ describe('AuthService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+  // it ('should have a login method', () => {
+  //   expect(service.login).toBeDefined()
+  // })
 });

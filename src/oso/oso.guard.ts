@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { Oso } from 'oso';
-import { User, Guest, Actor } from '../users/users.service';
+//import { User, Guest, Actor } from '../users/users.service';
 import { Document } from '../document/document.service';
 import { Base } from '../base/base.service';
 
@@ -20,14 +20,14 @@ export const Resource = (resource: any) => SetMetadata('resource', resource);
 export class OsoInstance extends Oso implements CanActivate {
     constructor(private reflector: Reflector, ) {
       super();
-      this.registerClass(User);
-      this.registerClass(Guest);
-      this.registerClass(Actor);
-      this.registerClass(Document);
-      this.registerClass(Base);
+      // this.registerClass(User);
+      // this.registerClass(Guest);
+      // this.registerClass(Actor);
+      // this.registerClass(Document);
+      // this.registerClass(Base);
       this.registerConstant('console', console);
-      this.loadFile(__dirname + '/root.polar');
-      this.loadFile(__dirname + '/policy.polar');
+      //this.loadFile(__dirname + '/root.polar');
+      //this.loadFile(__dirname + '/policy.polar');
     }
 
     canActivate(context: ExecutionContext): boolean {
