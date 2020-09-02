@@ -14,7 +14,7 @@ import {AuthService} from "./auth/auth.service";
 @Module({
   imports: [AuthModule, UsersModule, DocumentModule, OsoModule, BaseModule],
   controllers: [AppController, DocumentController],
-  providers: [AppService, AuthService, OsoGuard, OsoInstance, DocumentService],
+  providers: [AppService, DocumentService, OsoGuard, OsoInstance],
   exports: [],
 })
 export class AppModule {
