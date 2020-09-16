@@ -2,14 +2,15 @@ import { getLogger } from 'log4js';
 import { Map, Set } from 'immutable';
 import { Oso } from 'oso';
 import { OsoConfig } from './oso-config';
-import { OsoService } from './oso-service';
+import { AuthorizationService } from './authorization.service';
 
 jest.mock('oso');
 getLogger().level = 'info';
 
-describe(OsoService.name, () => {
+describe(AuthorizationService.name, () => {
   // Mocks for Oso
   let mockOso: Oso;
+  let mockLoadFile;
 
   // Mocks for OsoConfig
   class A {
@@ -29,17 +30,19 @@ describe(OsoService.name, () => {
   let mockFiles;
   const expectedFiles: Set<string> = Set(['a', 'b']);
 
-  let service: OsoService;
+  let service: AuthorizationService;
 
   beforeEach(async () => {
+    // wire up mock oso
     mockOso = new Oso();
-    // make sure the constructor is actually mocked
-    expect(Oso).toHaveBeenCalled();
+    expect(Oso).toHaveBeenCalled(); // make sure oso is actually mocked
+    mockLoadFile = jest.spyOn(mockOso, 'loadFile');
+    mockLoadFile.mockReturnValue(Promise.resolve()); // default: always successfully load file
+
 
     // wire up mock config
     mockClasses = jest.fn();
     mockClasses.mockReturnValue(expectedClasses);
-
 
     mockConstants = jest.fn();
     mockConstants.mockReturnValue(expectedConstants);
@@ -53,7 +56,7 @@ describe(OsoService.name, () => {
       files: mockFiles
     };
 
-    service = new OsoService(mockOsoConfig, mockOso);
+    service = new AuthorizationService(mockOsoConfig, mockOso);
   });
 
   afterEach(() => {
@@ -88,10 +91,25 @@ describe(OsoService.name, () => {
     const expectedError = {msg: 'the message'};
     mockLoadFile.mockImplementation(() => new Promise<void>((resolve, reject) => reject(expectedError)));
 
-    service = new OsoService(mockOsoConfig, mockOso);
+    service = new AuthorizationService(mockOsoConfig, mockOso);
     expectedFiles.map(filename => expect(mockOso.loadFile).toHaveBeenCalledWith(filename));
     await expect(service.initialized()).rejects.toEqual(expectedError);
     // TODO: Test the case where *some* files load properly and others fail.
+  });
+
+  it('should proxy isAllowed to the backend oso instance', async () => {
+    const mockActor = {a: 'a'};
+    const mockAction = {b: 'b'};
+    const mockResource = {c: 'c'};
+
+
+    const mockIsAllowed = jest.spyOn(mockOso, 'isAllowed');
+    const mockInitialized = jest.spyOn(service, 'initialized');
+
+    await service.isAllowed(mockActor, mockAction, mockResource);
+
+    expect(mockInitialized).toHaveBeenCalledTimes(1);
+    expect(mockIsAllowed).toHaveBeenCalledWith(mockActor, mockAction, mockResource);
   });
 
 })
