@@ -80,7 +80,7 @@ describe(OsoService.name, () => {
     expect(mockOso.loadFile).toHaveBeenCalledTimes(expectedFiles.size);
     expectedFiles.map(filename => expect(mockOso.loadFile).toHaveBeenCalledWith(filename));
 
-    expect(service.initialized()).resolves;
+    await expect(service.initialized()).resolves.not.toThrow();
   });
 
   it('should check for initialization errors and set Promise that rejects', async () => {
